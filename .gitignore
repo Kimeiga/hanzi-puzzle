@@ -1,0 +1,14 @@
+.DS_Store
+node_modules
+/build
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
+.vercel
+.output
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+src/lib/data/dictionary_word_2024-01-18.jsonl
+src/lib/data/dictionary_char_2024-01-18.jsonl
