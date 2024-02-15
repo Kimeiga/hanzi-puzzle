@@ -22,6 +22,10 @@ def create_char_json():
     print(len(entries))
 
     # add ids information
+    with open('character_strokes.json', 'r', encoding='utf-8') as file:
+        char2strokes = json.load(file)
+
+    # add ids information
 
     with open('ids.json', 'r', encoding='utf-8') as file:
         ids_data = json.load(file)
@@ -29,6 +33,8 @@ def create_char_json():
     for char, value in entries.items():
         if char in ids_data:
             value['ids'] = ids_data[char]
+            value['ids_strokes'] = [char2strokes.get(
+                char, 0) for char in value['ids']]
         else:
             print(char)
 
@@ -92,7 +98,7 @@ def rest():
             e.get('statistics', {}).get('topWords', [])) > 0 and 'simpVariants' not in e, entries.values()))))
 
 
-create_char_json_japanese()
+create_char_json()
 
 
 def japanese_test():

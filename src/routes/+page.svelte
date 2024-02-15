@@ -11,7 +11,7 @@
 		// other properties
 	};
 
-	const chinese = false;
+	const chinese = true;
 
 	$: console.log(data);
 
@@ -175,7 +175,7 @@
 <main>
 	<div class="game">
 		{#if correctness == 'correct'}
-			<h1 style="font-weight: 400; font-size: 3rem; margin: 1rem;">{data.randomChar.literal}</h1>
+			<h1 style="font-weight: 400; font-size: 3rem; margin: 1rem;">{data.randomChar.char}</h1>
 		{/if}
 		{#if chinese}
 			<h1 class="gloss">{data.randomChar.gloss}</h1>
