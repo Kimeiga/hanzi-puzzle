@@ -4,7 +4,7 @@
 
 	export let data = {
 		randomChar: {
-			ids: []
+			i: []
 			// other properties
 		},
 		randomComponents: []
@@ -26,8 +26,8 @@
 	// 	.splice(0, 9)
 	// 	.sort(() => Math.random() - 0.5);
 	let choices = [
-		...(data.randomChar.ids
-			? data.randomChar.ids.split('').map((char) => ({
+		...(data.randomChar.i
+			? data.randomChar.i.split('').map((char) => ({
 					char,
 					ids: true,
 					selected: false,
@@ -131,7 +131,7 @@
 	// function submitAnswer() {}
 	let correctness = 'unsubmitted'; // "correct", "semi-correct", "wrong", "unsubmitted"
 	function submitAnswer() {
-		let correctChoices = data.randomChar.ids;
+		let correctChoices = data.randomChar.i;
 		let selectedIds = choices.filter((choice) => choice.selected).map((choice) => choice.char);
 
 		// Update choices with correct/incorrect status
@@ -178,10 +178,14 @@
 			<h1 style="font-weight: 400; font-size: 3rem; margin: 1rem;">{data.randomChar.char}</h1>
 		{/if}
 		{#if chinese}
-			<h1 class="gloss">{data.randomChar.gloss}</h1>
-			{#each data.randomChar?.statistics?.topWords ?? [] as word}
+			{#each data.randomChar?.w ?? [] as word}
+				<p>
+					{word.w.replaceAll(data.char, '_')}
+					{word.p}
+					{word.d}
+				</p>
 				<!-- {#if word.trad != data.randomChar.char && word.word != data.randomChar.char} -->
-				<p class="topWord">{word.word.replaceAll(data.randomChar.char, '_')} {word.gloss}</p>
+				<!-- <p class="topWord">{word.word.replaceAll(data.randomChar.char, '_')} {word.gloss}</p> -->
 				<!-- {/if} -->
 			{/each}
 		{:else}
@@ -257,11 +261,7 @@
 
 		{#if showAnswer}
 			<div class="answer">
-				{#if chinese}
-					<p>{data.randomChar.char}</p>
-				{:else}
-					<p>{data.randomChar.literal}</p>
-				{/if}
+				<p>{data.char}</p>
 			</div>
 		{/if}
 

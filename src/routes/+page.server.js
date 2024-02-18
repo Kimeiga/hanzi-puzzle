@@ -16,16 +16,16 @@ function getRandomKeyValuePair(obj) {
     const keys = Object.keys(obj);
     const randomKey = keys[Math.floor(Math.random() * keys.length)];
     const randomValue = obj[randomKey];
-    return randomValue;
+    return [randomKey, randomValue];
 }
 
 export async function load({ params }) {
-    const charData = await loadData('src/lib/data/char_min.json');
+    const charData = await loadData('src/lib/data/new/char2wordContainingChar_min.json');
     const strokeNumber2Component = await loadData('src/lib/data/all_components.json');
 
     // get random character from charData
 
-    const randomChar = getRandomKeyValuePair(charData);
+    const [char, randomChar] = getRandomKeyValuePair(charData);
 
     // // get 9 random components from strokeNumber2Component, with duplicates
     // for (let i = 0; i < numberOfComponents; i++) {
@@ -39,9 +39,9 @@ export async function load({ params }) {
     // console.log(randomChar.ids.length)
     // console.log(randomChar.ids_strokes)
 
-    for (let i = 0; i < numberOfComponents - randomChar.ids.length; i++) {
-        const indexOfComponentToConsider = i % randomChar.ids_strokes.length;
-        const componentToConsider = randomChar.ids_strokes[indexOfComponentToConsider];
+    for (let i = 0; i < numberOfComponents - randomChar.i.length; i++) {
+        const indexOfComponentToConsider = i % randomChar.s.length;
+        const componentToConsider = randomChar.s[indexOfComponentToConsider];
 
         // console.log(randomChar.ids_strokes)
         // console.log(strokeNumber2Component[randomChar.ids_strokes[i % randomChar.ids_strokes.length]])
@@ -59,6 +59,7 @@ export async function load({ params }) {
     }
 
     return {
+        char,
         randomChar,
         randomComponents
     }
