@@ -31,6 +31,10 @@ with open('cedict_ts.u8', 'r', encoding='utf-8') as file:
                 if char in ['ˋ', '，', '·', 'π', '、'] or ord(char) < 128 or char in ['ㄅ', 'ㄧ', 'ㄤ']:
                     continue
 
+                if char == simplified:
+                    char2wordContainingChar[char]['c'] = obj
+                    continue
+
                 # Append the object to the list for this character
                 char2wordContainingChar[char]['w'].append(obj)
 
@@ -44,14 +48,35 @@ with open('cedict_ts.u8', 'r', encoding='utf-8') as file:
 
 for char, wordList in char2wordContainingChar.items():
 
-    if all(word['w'] != char for word in wordList['w']):
+    # if all(word['w'] != char for word in wordList['w']):
+    #     print(char)
+
+    if 'c' not in wordList:
         print(char)
+
+with open("subtlex.json", "r", encoding='utf-8') as file:
+    subtlex_data = json.load(file)
+
+final_entries = {}
+
+for char in subtlex_data[:3000]:
+    if char in ["𠈌",
+                "傢",
+                "碁",
+                "濙",
+                "堃",
+                "皙",
+                "阢",
+                "榘",
+                "鱆"]:
+        print(char)
+    final_entries[char] = char2wordContainingChar[char]
 
 
 with open('char2wordContainingChar.json', 'w', encoding='utf-8') as file:
-    json.dump(char2wordContainingChar, file, ensure_ascii=False, indent=4)
+    json.dump(final_entries, file, ensure_ascii=False, indent=4)
 with open('char2wordContainingChar_min.json', 'w', encoding='utf-8') as file:
-    json.dump(char2wordContainingChar, file,
+    json.dump(final_entries, file,
               ensure_ascii=False, separators=(',', ':'))
 
 '''

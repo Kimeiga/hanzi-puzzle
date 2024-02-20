@@ -11,8 +11,6 @@
 		// other properties
 	};
 
-	const chinese = true;
-
 	$: console.log(data);
 
 	// let choices = [...data.randomChar.ids, ...data.randomComponents]
@@ -25,24 +23,28 @@
 	// ]
 	// 	.splice(0, 9)
 	// 	.sort(() => Math.random() - 0.5);
-	let choices = [
-		...(data.randomChar.i
-			? data.randomChar.i.split('').map((char) => ({
-					char,
-					ids: true,
-					selected: false,
-					status: 'unselected'
-				}))
-			: []),
-		...(Array.isArray(data.randomComponents) ? data.randomComponents : []).map((char) => ({
-			char,
-			ids: false,
-			selected: false,
-			status: 'unselected'
-		}))
-	]
-		.splice(0, 9)
-		.sort(() => Math.random() - 0.5);
+	let choices = getChoices();
+
+	function getChoices() {
+		return [
+			...(data.randomChar.i
+				? data.randomChar.i.split('').map((char) => ({
+						char,
+						ids: true,
+						selected: false,
+						status: 'unselected'
+					}))
+				: []),
+			...(Array.isArray(data.randomComponents) ? data.randomComponents : []).map((char) => ({
+				char,
+				ids: false,
+				selected: false,
+				status: 'unselected'
+			}))
+		]
+			.splice(0, 9)
+			.sort(() => Math.random() - 0.5);
+	}
 
 	// let choiceObjects = [];
 
@@ -61,13 +63,6 @@
 	}
 
 	let showAnswer = false;
-
-	let onyomis = [];
-	let kunyomis = [];
-	let pinyins = [];
-	let korean_rs = [];
-	let korean_hs = [];
-	let vietnameses = [];
 
 	// Assuming data.randomChar.readingMeaning.groups[0].readings is an array of reading objects
 	data.randomChar.readingMeaning?.groups[0].readings.forEach((reading) => {
@@ -166,6 +161,16 @@
 
 		correctness = allCorrect ? 'correct' : anyCorrect ? 'semi-correct' : 'wrong';
 	}
+
+	async function generateNewPuzzle() {
+		const response = await fetch('/api/generate-puzzle');
+		if (response.ok) {
+			data = await response.json();
+			choices = getChoices();
+		} else {
+			console.error('Failed to fetch new puzzle');
+		}
+	}
 </script>
 
 <svelte:head>
@@ -175,68 +180,38 @@
 <main>
 	<div class="game">
 		{#if correctness == 'correct'}
-			<h1 style="font-weight: 400; font-size: 3rem; margin: 1rem;">{data.randomChar.char}</h1>
+			<h1 style="font-weight: 400; font-size: 3rem; margin: 1rem;">{data.char}</h1>
 		{/if}
-		{#if chinese}
-			{#each data.randomChar?.w ?? [] as word}
+		<p>
+			{convertNumericalPinyinToToneMarks(data.randomChar.c.p)}
+			{#each data.randomChar?.c.d ?? [] as definition}
+				<p>
+					{definition}
+				</p>
+			{/each}
+		</p>
+		<hr />
+		{#each data.randomChar?.w ?? [] as word, index}
+			{#if index < 20}
 				<p>
 					{word.w.replaceAll(data.char, '_')}
-					{word.p}
+					{word.p
+						.split(' ')
+						.map((e) => convertNumericalPinyinToToneMarks(e))
+						.join('')}:
 					{word.d}
 				</p>
-				<!-- {#if word.trad != data.randomChar.char && word.word != data.randomChar.char} -->
-				<!-- <p class="topWord">{word.word.replaceAll(data.randomChar.char, '_')} {word.gloss}</p> -->
-				<!-- {/if} -->
+			{/if}
+			<!-- {#if word.trad != data.randomChar.char && word.word != data.randomChar.char} -->
+			<!-- <p class="topWord">{word.word.replaceAll(data.randomChar.char, '_')} {word.gloss}</p> -->
+			<!-- {/if} -->
+		{/each}
+		<div>
+			{#each data.randomChar.readingMeaning?.groups[0].meanings ?? [] as meaning}
+				<span class="comma">{meaning.value}</span>
 			{/each}
-		{:else}
-			<div>
-				{#each data.randomChar.readingMeaning?.groups[0].meanings ?? [] as meaning}
-					<span class="comma">{meaning.value}</span>
-				{/each}
-			</div>
-			<hr />
-			{#if onyomis.length > 0 || kunyomis.length > 0}
-				<div>
-					<A1F1ef1f1f5 size={16} />
-					{#if onyomis.length > 0}
-						{#each onyomis as onyomi}<span class="comma-jp">{onyomi}</span
-							>{/each}{/if}{#if kunyomis.length > 0}{#each kunyomis as kunyomi}<span
-								class="comma-jp">{kunyomi}</span
-							>{/each}{/if}
-				</div>
-			{/if}
-			{#if data.randomChar.readingMeaning.nanori.length > 0}
-				<div>
-					📛
-					{#each data.randomChar.readingMeaning.nanori ?? [] as nanori}
-						<span class="comma-jp">{nanori}</span>
-					{/each}
-				</div>
-			{/if}
-			{#if pinyins.length > 0}
-				<div>
-					<A1F1e81f1f3 size={16} />
-					{#each pinyins as pinyin}<span class="comma"
-							>{convertNumericalPinyinToToneMarks(pinyin)}</span
-						>{/each}
-					<!-- {#each pinyins as pinyin}<span class="comma">{pinyin}</span>{/each} -->
-				</div>
-			{/if}
-			{#if korean_hs.length > 0}
-				<div>
-					<A1F1f01f1f7 size={16} />
-					{#each korean_rs as korean_r, i}
-						<span class="comma"><ruby>{korean_hs[i]}<rt>{korean_r}</rt></ruby></span>
-					{/each}
-				</div>
-			{/if}
-			{#if vietnameses.length > 0}
-				<div>
-					<A1F1fb1f1f3 size={16} />
-					{#each vietnameses as vietnamese}<span class="comma">{vietnamese}</span>{/each}
-				</div>
-			{/if}
-		{/if}
+		</div>
+		<hr />
 		<br />
 		<div class="choices">
 			{#each choices as choice, i}
@@ -272,6 +247,7 @@
 		<button on:click={() => (showAnswer = !showAnswer)}
 			>{showAnswer ? 'Hide' : 'Show'} Answer</button
 		>
+		<button on:click={generateNewPuzzle}>Generate New Puzzle</button>
 	</div>
 </main>
 
@@ -289,8 +265,9 @@
 		justify-content: center;
 		align-items: center;
 		height: 100vh;
-		width: 100vw;
+		/* width: 100vw; */
 		text-align: center;
+		padding: 1rem;
 	}
 
 	.choices {
