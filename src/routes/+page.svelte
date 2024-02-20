@@ -171,6 +171,10 @@
 			console.error('Failed to fetch new puzzle');
 		}
 	}
+
+	const char2GlyphWikiURL = (char) => {
+		return `https://glyphwiki.org/glyph/u${char.codePointAt(0).toString(16)}.svg`;
+	};
 </script>
 
 <svelte:head>
@@ -184,12 +188,8 @@
 		{/if}
 		<p>
 			{convertNumericalPinyinToToneMarks(data.randomChar.c.p)}
-			{#each data.randomChar?.c.d ?? [] as definition}
-				<p>
-					{definition}
-				</p>
-			{/each}
 		</p>
+		<p>{data.randomChar?.c.d.join(', ')}</p>
 		<hr />
 		{#each data.randomChar?.w ?? [] as word, index}
 			{#if index < 20}
@@ -219,7 +219,8 @@
 					on:click={() => toggleChoice(i)}
 					class={choice.selected ? 'selected' : choice.status}
 				>
-					{choice.char}
+					<!-- {choice.char} -->
+					<img src={char2GlyphWikiURL(choice.char)} alt={choice.char} />
 				</button>
 			{/each}
 		</div>
@@ -264,7 +265,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		height: 100vh;
+		min-height: 100vh;
 		/* width: 100vw; */
 		text-align: center;
 		padding: 1rem;
