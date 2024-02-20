@@ -47,8 +47,9 @@ export async function generatePuzzle() {
     // console.log(randomChar.ids.length)
     // console.log(randomChar.ids_strokes)
 
-    for (let i = 0; i < numberOfComponents - randomChar.i.length; i++) {
-        const indexOfComponentToConsider = i % randomChar.s.length;
+
+    for (let i = 0; i < numberOfComponents - [...randomChar.i].length; i++) {
+        const indexOfComponentToConsider = i % [...randomChar.s].length;
         const componentToConsider = randomChar.s[indexOfComponentToConsider];
 
         // console.log(randomChar.ids_strokes)
@@ -61,7 +62,7 @@ export async function generatePuzzle() {
         //     continue;
         // }
 
-        const randomIndex = Math.floor(Math.random() * strokeNumber2Component[componentToConsider].length);
+        const randomIndex = Math.floor(Math.random() * [...strokeNumber2Component[componentToConsider]].length);
         // console.log(i, randomChar.ids_strokes[i % randomChar.ids_strokes.length], strokeNumber2Component[randomChar.ids_strokes[i]], randomIndex, strokeNumber2Component[randomChar.ids_strokes[i]][randomIndex])
         randomComponents.push(strokeNumber2Component[componentToConsider][randomIndex]);
     }

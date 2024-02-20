@@ -28,7 +28,7 @@
 	function getChoices() {
 		return [
 			...(data.randomChar.i
-				? data.randomChar.i.split('').map((char) => ({
+				? [...data.randomChar.i].map((char) => ({
 						char,
 						ids: true,
 						selected: false,
@@ -91,37 +91,6 @@
 				break;
 		}
 	});
-
-	function convertNumericalPinyinToToneMarks(pinyinWithNumber) {
-		const toneMarks = {
-			a: ['ā', 'á', 'ǎ', 'à'],
-			e: ['ē', 'é', 'ě', 'è'],
-			i: ['ī', 'í', 'ǐ', 'ì'],
-			o: ['ō', 'ó', 'ǒ', 'ò'],
-			u: ['ū', 'ú', 'ǔ', 'ù'],
-			ü: ['ǖ', 'ǘ', 'ǚ', 'ǜ']
-		};
-
-		// Extract the tone number and remove it from the syllable
-		const toneNumber = parseInt(pinyinWithNumber.slice(-1));
-		const pinyin = pinyinWithNumber.slice(0, -1);
-
-		// Handle the fifth tone (neutral tone) directly
-		if (toneNumber === 5) {
-			return pinyin; // Return the pinyin without any tone mark
-		}
-
-		const adjustedToneNumber = toneNumber - 1; // Adjust for array indexing
-
-		// Find the main vowel to apply the tone mark to
-		for (let vowel in toneMarks) {
-			if (pinyin.includes(vowel)) {
-				// Replace the vowel with its toned counterpart
-				return pinyin.replace(vowel, toneMarks[vowel][adjustedToneNumber]);
-			}
-		}
-		return pinyinWithNumber; // Return original if no match (shouldn't happen in proper pinyin)
-	}
 
 	// function submitAnswer() {}
 	let correctness = 'unsubmitted'; // "correct", "semi-correct", "wrong", "unsubmitted"
@@ -187,19 +156,16 @@
 			<h1 style="font-weight: 400; font-size: 3rem; margin: 1rem;">{data.char}</h1>
 		{/if}
 		<p>
-			{convertNumericalPinyinToToneMarks(data.randomChar.c.p)}
+			{data.randomChar.c.p}
 		</p>
-		<p>{data.randomChar?.c.d.join(', ')}</p>
+		<p>{data.randomChar?.c.gloss}</p>
 		<hr />
 		{#each data.randomChar?.w ?? [] as word, index}
 			{#if index < 20}
 				<p>
-					{word.w.replaceAll(data.char, '_')}
-					{word.p
-						.split(' ')
-						.map((e) => convertNumericalPinyinToToneMarks(e))
-						.join('')}:
-					{word.d}
+					{word.word.replaceAll(data.char, '_')}
+					{word.p}:
+					{word.gloss}
 				</p>
 			{/if}
 			<!-- {#if word.trad != data.randomChar.char && word.word != data.randomChar.char} -->
