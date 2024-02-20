@@ -1,4 +1,4 @@
-// src/routes/api/generate-puzzle.js
+export const prerender = false;
 import { generatePuzzle } from '$lib/generatePuzzle';
 
 export async function load(params) {
