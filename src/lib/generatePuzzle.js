@@ -1,14 +1,4 @@
 
-// import the data 
-
-import { promises as fs } from 'fs';
-import path from 'path';
-
-async function loadData(p) {
-    const filePath = path.resolve(p);
-    const jsonData = JSON.parse(await fs.readFile(filePath, 'utf8'));
-    return jsonData;
-}
 
 const numberOfComponents = 9;
 
@@ -19,9 +9,24 @@ function getRandomKeyValuePair(obj) {
     return [randomKey, randomValue];
 }
 
+import { promises as fs } from 'fs';
+import path from 'path';
+
+// Helper function to load data
+async function loadData(relativePath) {
+    // Construct an absolute path that works both locally and on Vercel
+    const basePath = process.cwd(); // Gets the current working directory
+    const filePath = path.join(basePath, relativePath);
+    const jsonData = JSON.parse(await fs.readFile(filePath, 'utf8'));
+    return jsonData;
+}
+
 export async function generatePuzzle() {
+    // Adjust the paths to be relative from the project root
     const charData = await loadData('src/lib/data/new/char2wordContainingChar_min.json');
     const strokeNumber2Component = await loadData('src/lib/data/all_components.json');
+
+    //
 
     // get random character from charData
 
